@@ -775,16 +775,22 @@ function patchRomFromJSON(rom) {
 					});
 				});
 			} else {
-				$.getJSON(current_base_file, function(patch) {
-					localforage.setItem('vt_stored_base', current_base_file)
-						.then(function() {
-							localforage.setItem('vt_base_json', patch)
-								.then(patchRomFromJSON(rom)
-								.then(function() {
-									return resolve(rom);
-								}));
-						});
-				});
+				try {
+					$.getJSON(current_base_file, function(patch) {
+						localforage.setItem('vt_stored_base', current_base_file)
+							.then(function() {
+								localforage.setItem('vt_base_json', patch)
+									.then(patchRomFromJSON(rom)
+									.then(function() {
+										return resolve(rom);
+									}));
+							});
+					});
+				}
+				catch(err) {
+					$('.alert .message').html('Failed patching : ' + err.toString());
+					$('.alert').show();//.delay(2000).fadeOut("slow");
+				}
 			}
 		});
 	});
